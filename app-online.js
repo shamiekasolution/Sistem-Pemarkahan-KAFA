@@ -18,7 +18,44 @@ function preview(all){let i=Number($('#slipStudent').value)||0;$('#preview').inn
 function refresh(){opts($('#student'));opts($('#slipStudent'));loadStudent();preview(false)}
 function initMeta(){let labels={school:'Nama Sekolah',address:'Alamat',class:'Kelas',teacher:'Nama Guru',exam:'Nama Peperiksaan',year:'Tahun'};$('#metaInputs').innerHTML=Object.entries(labels).map(([key,label])=>`<label>${label}<input data-meta="${key}" value="${escapeHTML(db.meta[key])}"></label>`).join('')}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.panel').forEach(x=>x.classList.add('hidden'));$('#'+b.dataset.tab).classList.remove('hidden');if(b.dataset.tab==='slips')preview(false)});
-$('#student').onchange=loadStudent;$('#slipStudent').onchange=()=>preview(false);$('#save').onclick=saveStudent;$('#add').onclick=async()=>{let name=prompt('Nama murid baharu:');if(!name?.trim())return;try{let st=await addStudentRemote(name.trim());db.students.push(st);refresh();$('#student').value=String(db.students.length-1);loadStudent()}catch(err){alert('Gagal tambah murid: '+err.message)}};$('#saveMeta').onclick=async()=>{const updated={...db.meta};document.querySelectorAll('[data-meta]').forEach(e=>updated[e.dataset.meta]=e.value);try{await saveMetaRemote(updated);db.meta=updated;preview(false);alert('Maklumat disimpan dalam Supabase.')}catch(err){alert('Gagal simpan: '+err.message)}};$('#printOne').onclick=()=>{preview(false);window.print()};$('#printAll').onclick=()=>{preview(true);window.print()};
+
+// Popup tambah murid khusus sistem (menggantikan prompt pelayar).
+function bukaPopupTambahMurid(){
+  return new Promise(resolve=>{
+    const modal=document.querySelector('#tambahMuridModal');
+    const input=document.querySelector('#namaMuridBaharu');
+    const form=document.querySelector('#tambahMuridForm');
+    const batal=document.querySelector('#batalTambahMurid');
+    const sebelumnya=document.activeElement;
+    let selesai=false;
+    const tutup=(nama)=>{
+      if(selesai)return;
+      selesai=true;
+      modal.classList.add('hidden');
+      modal.setAttribute('aria-hidden','true');
+      form.removeEventListener('submit',simpan);
+      batal.removeEventListener('click',batalkan);
+      modal.removeEventListener('click',luar);
+      document.removeEventListener('keydown',kekunci);
+      sebelumnya?.focus?.();
+      resolve(nama);
+    };
+    const simpan=e=>{e.preventDefault();const nama=input.value.trim();if(!nama){input.focus();return;}tutup(nama)};
+    const batalkan=()=>tutup(null);
+    const luar=e=>{if(e.target===modal)tutup(null)};
+    const kekunci=e=>{if(e.key==='Escape'){e.preventDefault();tutup(null)}};
+    input.value='';
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden','false');
+    form.addEventListener('submit',simpan);
+    batal.addEventListener('click',batalkan);
+    modal.addEventListener('click',luar);
+    document.addEventListener('keydown',kekunci);
+    input.focus();
+  });
+}
+
+$('#student').onchange=loadStudent;$('#slipStudent').onchange=()=>preview(false);$('#save').onclick=saveStudent;$('#add').onclick=async()=>{let name=await bukaPopupTambahMurid();if(!name?.trim())return;try{let st=await addStudentRemote(name.trim());db.students.push(st);refresh();$('#student').value=String(db.students.length-1);loadStudent()}catch(err){alert('Gagal tambah murid: '+err.message)}};$('#saveMeta').onclick=async()=>{const updated={...db.meta};document.querySelectorAll('[data-meta]').forEach(e=>updated[e.dataset.meta]=e.value);try{await saveMetaRemote(updated);db.meta=updated;preview(false);alert('Maklumat disimpan dalam Supabase.')}catch(err){alert('Gagal simpan: '+err.message)}};$('#printOne').onclick=()=>{preview(false);window.print()};$('#printAll').onclick=()=>{preview(true);window.print()};
 
 async function saveStudentRemote(st){const {error}=await client.from('kafa_students').update({name:st.name,marks:st.marks,comment:st.comment}).eq('id',st.id).eq('school_id',currentSchool);if(error)throw error}
 async function addStudentRemote(name){const {data,error}=await client.from('kafa_students').insert({school_id:currentSchool,name,marks:Array(7).fill('TH'),comment:''}).select('id,name,marks,comment').single();if(error)throw error;return data}

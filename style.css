@@ -1,0 +1,332 @@
+*{box-sizing:border-box}body{margin:0;background:#eef2f7;font:15px Arial,sans-serif;color:#1d2939}header{background:#102a48;color:white;padding:22px 5%}header h1{margin:0;font-size:23px}header p{margin:6px 0 0;color:#cbd5e1}main{max-width:1100px;margin:24px auto;padding:0 16px}nav,.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}button{border:0;background:#155a95;color:white;border-radius:7px;padding:11px 16px;cursor:pointer}nav button{background:#d9e3ee;color:#17324e}nav button.active{background:#155a95;color:white}.panel{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 10px #0001}.hidden{display:none}label{display:block;font-weight:600;margin-bottom:12px}input,select{display:block;width:100%;max-width:550px;margin-top:6px;border:1px solid #cbd5e1;border-radius:6px;padding:10px;font:inherit}.toolbar label{min-width:240px}.markrow{display:flex;gap:16px;align-items:center;padding:7px;border-bottom:1px solid #edf1f5}.markrow label{flex:1;margin:0}.markrow input{max-width:140px}.markrow output{width:75px;font-weight:bold}.hint{color:#667085}.summary{padding:14px;background:#f0f7ff;margin-top:15px;border-radius:7px}
+#preview{overflow:auto;background:#e4e7ec;padding:16px}.slip{position:relative;background:#fff;color:#000;width:297mm;height:210mm;margin:0 auto 18px;border:1px solid #ddd;font:9px Arial,sans-serif}.excel-content{position:absolute;left:39.5mm;top:27mm;width:139mm}.slip-head{text-align:center}.crest{width:13mm;height:13mm;object-fit:contain;display:block;margin:0 auto 2mm}.slip .jawi{font-family:'Traditional Arabic','Noto Naskh Arabic',serif;font-size:12px;direction:rtl;font-weight:bold;line-height:1.4}.slip h3{font-size:9px;margin:3mm 0 5mm;font-weight:700}.slip h2{font-size:14px;margin:0 0 5mm;font-weight:700}.info-excel{margin:0 0 2mm}.info-row{display:grid;grid-template-columns:14% 14% 57% 15%;min-height:4mm;align-items:center}.info-row .value{font-size:8px;text-align:center;font-weight:700}.label-jawi{text-align:right;direction:rtl;font-size:9px;font-weight:bold}.excel-table{width:100%;border-collapse:collapse;direction:rtl;table-layout:fixed}.excel-table th,.excel-table td{border:.6px solid #444;text-align:center;padding:0 2px;height:5.8mm;font-size:9px}.excel-table th{background:#dceaf7;height:3mm;font-weight:bold}.excel-table .col-bil{width:14%}.excel-table .col-sub{width:58%}.excel-table .col-mark{width:14%}.excel-table .col-grade{width:14%}.excel-table .subject{font-size:11px;direction:rtl}.excel-stats{display:grid;grid-template-columns:1fr 1fr;column-gap:4mm;row-gap:1mm;margin-top:1mm;font-size:9px}.excel-comment{margin-top:3mm;display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:3mm;align-items:flex-start}.comment-label{font-size:9px;white-space:nowrap;direction:rtl}.comment-text{border:1px solid #555;width:87mm;min-height:9mm;padding:2mm;font-size:9px;text-align:center}.excel-signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;text-align:center;margin-top:7mm;direction:rtl;font-size:9px}.excel-signatures span{display:block;margin-top:5mm}.excel-signatures small{display:block;margin-top:2mm;text-align:right}
+@page{size:A4 landscape;margin:0}@media print{html,body{margin:0;padding:0;background:white}header,main>nav,.toolbar,.hint,#marks,#meta{display:none!important}main{margin:0;padding:0;max-width:none}.panel{padding:0;box-shadow:none}#slips{display:block!important}#preview{background:white;padding:0;overflow:visible}.slip{border:0;margin:0;width:297mm;height:210mm;break-after:page;page-break-after:always}.slip:last-child{break-after:auto;page-break-after:auto}}@media(max-width:700px){.panel{padding:12px}#preview{padding:8px}}
+
+/* Excel SLIP: exact grouping and spacing for the section beneath the marks table */
+.excel-bottom{font-family:Arial,'Traditional Arabic',sans-serif;font-size:9px;color:#000}
+.excel-stat-grid{display:grid;grid-template-columns:47% 53%;margin-top:.6mm;min-height:10mm}
+.stat-row{display:flex;align-items:center;height:4.2mm;white-space:nowrap}
+.stat-left .stat-row{justify-content:flex-start;gap:7mm}
+.stat-right .stat-row{justify-content:flex-end;gap:5mm}
+.stat-left .stat-val{min-width:18mm;text-align:center}
+.stat-right .stat-val{min-width:18mm;text-align:center}
+.stat-label{direction:rtl;text-align:right;font-size:10px}
+.excel-comment{display:grid;grid-template-columns:87mm 1fr;gap:2mm;margin-top:1.3mm;align-items:start;direction:ltr}
+.comment-text{box-sizing:border-box;width:87mm;min-height:9mm;border:0.5px solid #555;padding:1.1mm 2mm;font-size:9px;line-height:1.35;text-align:center}
+.comment-label{direction:rtl;text-align:center;font-size:10px;padding-top:1mm}
+.excel-signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-top:10mm;text-align:center;direction:ltr;font-size:10px}
+.excel-signatures .sig{position:relative;height:27mm}
+.excel-signatures .sig-date{position:absolute;top:15mm;right:1mm;direction:rtl}
+.excel-signatures .sig-line{position:absolute;top:22mm;left:4mm;right:4mm;border-bottom:.5px solid #777}
+.excel-signatures .sig-head .sig-line{top:22mm;left:9mm;right:9mm}
+
+/* FIX: ulasan tanpa kotak dan kandungan slip seimbang di tengah A4 landskap. */
+.slip .excel-content{left:50%;top:50%;transform:translate(-50%,-50%);width:139mm}
+.slip .comment-text{border:none!important;outline:none!important;box-shadow:none!important;background:transparent!important}
+@media print{
+  .slip .excel-content{left:50%;top:50%;transform:translate(-50%,-50%);width:139mm}
+  .slip .comment-text{border:none!important;outline:none!important;box-shadow:none!important}
+}
+
+/* FIX 20261105: one complete slip per A4 landscape page. */
+.slip .excel-content{left:50%;top:50%;transform:translate(-50%,-50%);width:139mm}
+.excel-stat-grid{min-height:0;row-gap:0;margin-top:1mm}
+.stat-row{height:4.2mm}
+.excel-comment{margin-top:2mm}
+.excel-signatures{margin-top:7mm}
+@media print{
+  @page{size:297mm 210mm;margin:0}
+  html,body{width:297mm!important;margin:0!important;padding:0!important;overflow:visible!important}
+  main,.panel,#slips,#preview{margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:visible!important;max-width:none!important}
+  .slip{display:block!important;position:relative!important;width:296mm!important;height:209mm!important;min-height:0!important;max-height:209mm!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:page!important;page-break-after:always!important}
+  .slip:last-child{break-after:auto!important;page-break-after:auto!important}
+  .slip .excel-content{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:139mm!important;margin:0!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  .excel-comment,.excel-signatures,.excel-stat-grid{break-inside:avoid!important;page-break-inside:avoid!important}
+  .slip .comment-text{border:0!important;outline:0!important;box-shadow:none!important}
+}
+
+/* FIX Portrait: one complete centered slip per A4 portrait page */
+.slip{width:210mm;height:297mm}
+@page{size:A4 portrait;margin:0}
+@media print{
+ @page{size:210mm 297mm;margin:0}
+ html,body{width:210mm!important}
+ .slip{width:209mm!important;height:296mm!important;max-height:296mm!important}
+ .slip .excel-content{left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:139mm!important}
+}
+
+/* FIX 20261105: portrait top alignment, compact metadata, signature line above date */
+.slip .excel-content{top:19mm;left:50%;transform:translateX(-50%);width:151mm}
+.info-excel{margin-bottom:2.5mm}
+.info-row{grid-template-columns: 23% 10% 56% 11%;column-gap:0;min-height:5mm}
+.info-row .value{text-align:right;padding-right:1.2mm;white-space:nowrap;font-size:8px}
+.info-row .label-jawi{text-align:right;white-space:nowrap;font-size:9px}
+.excel-signatures .sig-line,.excel-signatures .sig-head .sig-line{top:18mm}
+.excel-signatures .sig-date{top:21mm}
+@media print{
+ .slip .excel-content{top:19mm!important;left:50%!important;transform:translateX(-50%)!important;width:151mm!important}
+}
+
+/* FIX: kedudukan maklumat murid seperti Excel, nilai biasa (tidak bold). */
+.info-row{display:grid;grid-template-columns:20% 12% 53% 15%;column-gap:0;min-height:5mm;align-items:center}
+.info-row .value{font-weight:400!important;font-size:8px;text-align:right;padding-right:1mm;white-space:nowrap}
+.info-row .label-jawi{font-weight:400!important;font-size:9px;text-align:right;padding-right:0;white-space:nowrap;direction:rtl}
+.info-row .value:nth-child(3){text-align:right;padding-right:1mm}
+@media print{
+ .info-row .value,.info-row .label-jawi{font-weight:400!important}
+}
+
+/* FIX: susunan maklumat murid Excel dan ulasan rapat; hanya simbol & normal */
+.info-row{grid-template-columns:20% 12% 56% 12%;column-gap:0}
+.info-row .value:nth-child(1){text-align:right;padding-right:1mm}
+.info-row .label-jawi:nth-child(2){text-align:left;padding-left:1mm;padding-right:0;direction:rtl}
+.info-row .value:nth-child(3){text-align:right;padding-right:1mm}
+.info-row .label-jawi:nth-child(4){text-align:left;padding-left:1mm;padding-right:0;direction:rtl}
+.excel-comment{grid-template-columns:87mm auto;gap:1mm;justify-content:start}
+.comment-label{text-align:left;padding-top:1mm;white-space:nowrap}
+.excel-table .subject .amp-normal{font-weight:400!important;font-family:Arial,sans-serif}
+@media print{
+ .info-row{grid-template-columns:20% 12% 56% 12%}
+ .excel-comment{grid-template-columns:87mm auto;gap:1mm;justify-content:start}
+}
+
+/* FIX: empat baris butiran murid, tebal, dengan label Jawi di sebelah nilai. */
+.info-excel{display:flex;flex-direction:column;align-items:flex-end;gap:0.6mm;margin-bottom:2.5mm}
+.info-detail{display:flex;align-items:baseline;justify-content:flex-end;gap:1.4mm;width:100%;font-weight:700;font-size:9px;line-height:1.45}
+.info-detail .detail-value{direction:ltr;text-align:right;font-weight:700;white-space:nowrap}
+.info-detail .detail-label{direction:rtl;text-align:left;font-weight:700;white-space:nowrap;min-width:18mm}
+.excel-signatures .sig-head .sig-date{position:absolute;top:21mm;right:1mm;direction:rtl}
+@media print{.info-detail,.info-detail .detail-value,.info-detail .detail-label{font-weight:700!important}}
+
+/* FIX: Excel two-column student information and comment label aligned to right column. */
+.slip .info-excel{display:grid;grid-template-columns:32% 68%;align-items:start;gap:0;margin:0 0 2.5mm;width:100%}
+.slip .info-side{display:flex;flex-direction:column;gap:.6mm;min-width:0}
+.slip .info-left{align-items:flex-start}
+.slip .info-right{align-items:flex-end}
+.slip .info-detail{display:flex;width:auto;align-items:baseline;justify-content:flex-end;gap:1.3mm;font-weight:700;line-height:1.45;font-size:8px;white-space:nowrap}
+.slip .info-detail .detail-value{font-weight:700;text-align:right;white-space:nowrap}
+.slip .info-detail .detail-label{min-width:unset;font-weight:700;text-align:left;direction:rtl;white-space:nowrap}
+.slip .excel-comment{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1.3mm;align-items:start;justify-content:stretch;width:100%;direction:ltr}
+.slip .comment-text{width:auto;min-width:0;text-align:center;padding:0 1mm;border:0!important}
+.slip .comment-label{width:auto;min-width:0;text-align:right;white-space:nowrap;direction:rtl;padding-top:0}
+@media print{.slip .info-excel{display:grid!important;grid-template-columns:32% 68%!important}.slip .excel-comment{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:1.3mm!important;width:100%!important}}
+
+/* FIX 20261105: stable colon-before-Jawi display and equal signature lines */
+.slip .info-detail .detail-label{display:inline-flex!important;direction:ltr!important;align-items:baseline;gap:3px;unicode-bidi:isolate}
+.slip .label-colon{direction:ltr;unicode-bidi:isolate}
+.slip .excel-signatures .sig-line,.slip .excel-signatures .sig-head .sig-line{left:50%!important;right:auto!important;width:31mm!important;transform:translateX(-50%)!important;top:18mm!important;box-sizing:border-box!important;border-bottom:.5px solid #777!important}
+.slip .excel-signatures .sig-date{display:flex!important;direction:ltr!important;gap:3px;justify-content:flex-end;top:21mm!important;right:1mm!important}
+
+/* FIX: Semua teks butiran murid termasuk label Jawi adalah bold. */
+.slip .info-excel, .slip .info-excel .info-side, .slip .info-excel .info-detail, .slip .info-excel .detail-value, .slip .info-excel .detail-label, .slip .info-excel .detail-label span {font-weight:700!important;}
+
+/* FIX 20261105: nilai dan label Jawi rapat seperti butiran murid */
+.slip .excel-stat-grid{grid-template-columns:47% 53%;column-gap:0}
+.slip .stat-left,.slip .stat-right{display:flex;flex-direction:column;align-items:flex-end}
+.slip .stat-row{display:flex;align-items:baseline;justify-content:flex-end;gap:1.3mm!important;width:100%;height:auto;min-height:4.2mm;white-space:nowrap}
+.slip .stat-row .stat-val{min-width:0!important;width:auto!important;flex:none;text-align:right}
+.slip .stat-row .stat-label,.slip .comment-label{display:inline-flex;direction:ltr;align-items:baseline;gap:3px;white-space:nowrap;text-align:left}
+.slip .excel-comment{display:flex!important;flex-direction:row!important;align-items:baseline!important;justify-content:flex-end!important;gap:1.3mm!important;width:100%}
+.slip .excel-comment .comment-text{flex:0 1 auto!important;width:auto!important;max-width:105mm;min-width:0;text-align:right;padding:0!important}
+.slip .excel-comment .comment-label{flex:none;padding:0!important}
+@media print{.slip .excel-comment{display:flex!important;gap:1.3mm!important;justify-content:flex-end!important}.slip .stat-row{gap:1.3mm!important}}
+
+/* FIX: Peratus/Keputusan label aligned vertically with Tahun label. */
+.slip .excel-stat-grid{display:grid!important;grid-template-columns:32% 68%!important;column-gap:0!important;width:100%}
+.slip .stat-left{align-items:stretch!important}
+.slip .stat-left .stat-row{display:flex!important;justify-content:flex-start!important;width:100%!important;gap:1.3mm!important}
+.slip .stat-left .stat-val{flex:1 1 auto!important;min-width:0!important;text-align:right!important}
+.slip .stat-left .stat-label{flex:0 0 auto!important;margin-right:0!important}
+/* Keep Jawi label on right and commentary immediately to its left. */
+.slip .excel-comment{display:flex!important;direction:ltr!important;flex-direction:row!important;justify-content:flex-end!important;align-items:baseline!important;gap:1.3mm!important}
+.slip .excel-comment .comment-label{display:inline-flex!important;direction:ltr!important;white-space:nowrap!important;flex:none!important}
+.slip .excel-comment .comment-text{flex:0 1 auto!important;max-width:calc(100% - 35mm)!important;min-width:0!important;overflow-wrap:break-word!important;text-align:right!important}
+@media print{
+ .slip .excel-stat-grid{grid-template-columns:32% 68%!important}
+ .slip .stat-left .stat-row{justify-content:flex-start!important}
+ .slip .excel-comment{justify-content:flex-end!important}
+}
+
+/* FIX: gunakan koordinat lajur yang sama bagi Tahun, Peratus dan Keputusan.
+   Nilai di kiri; titik bertindih dan Jawi bermula pada x=19mm. */
+.slip .info-left{width:100%!important;align-items:stretch!important}
+.slip .info-left .info-detail,
+.slip .stat-left .stat-row{
+ display:grid!important;grid-template-columns:19mm max-content!important;
+ column-gap:1.3mm!important;justify-content:start!important;
+ align-items:baseline!important;width:100%!important;
+}
+.slip .info-left .detail-value,
+.slip .stat-left .stat-val{
+ grid-column:1!important;text-align:right!important;
+ width:19mm!important;min-width:0!important;flex:none!important;
+}
+.slip .info-left .detail-label,
+.slip .stat-left .stat-label{
+ grid-column:2!important;justify-self:start!important;
+ display:inline-flex!important;direction:ltr!important;
+ gap:3px!important;margin:0!important;white-space:nowrap!important;
+}
+/* Label ulasan kekal di hujung kanan; teks tidak bertindih dengan label. */
+.slip .excel-comment{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;column-gap:1.3mm!important;align-items:start!important;direction:ltr!important}
+.slip .excel-comment .comment-text{grid-column:1!important;width:100%!important;max-width:none!important;text-align:right!important;line-height:1.4!important}
+.slip .excel-comment .comment-label{grid-column:2!important;justify-self:end!important;display:inline-flex!important;direction:ltr!important;gap:3px!important;white-space:nowrap!important}
+@media print{
+ .slip .info-left .info-detail,.slip .stat-left .stat-row{display:grid!important;grid-template-columns:19mm max-content!important;column-gap:1.3mm!important;justify-content:start!important}
+ .slip .excel-comment{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important}
+}
+
+/* FIX: pulihkan kedudukan Darjah/Tahun seperti versi sebelum lajur tetap.
+   Peratus/Keputusan mengikuti koordinat label yang sama, tanpa mengalih info murid. */
+.slip .info-left .info-detail,
+.slip .stat-left .stat-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) max-content!important;
+  column-gap:1.3mm!important;
+  justify-content:stretch!important;
+  align-items:baseline!important;
+  width:100%!important;
+}
+.slip .info-left .detail-value,
+.slip .stat-left .stat-val{
+  grid-column:1!important;
+  width:auto!important;
+  min-width:0!important;
+  text-align:right!important;
+}
+.slip .info-left .detail-label,
+.slip .stat-left .stat-label{
+  grid-column:2!important;
+  width:11mm!important;
+  min-width:11mm!important;
+  justify-self:end!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+}
+@media print{
+  .slip .info-left .info-detail,
+  .slip .stat-left .stat-row{
+    grid-template-columns:minmax(0,1fr) max-content!important;
+    justify-content:stretch!important;
+  }
+}
+
+/* FIX: Empat baris kiri bermula tepat pada tepi kiri jadual Gred.
+   Hanya penjajaran mendatar; susun atur dan fungsi lain kekal. */
+.slip .info-left .info-detail,
+.slip .stat-left .stat-row {
+  display:grid!important;
+  grid-template-columns:19mm max-content!important;
+  column-gap:1.3mm!important;
+  justify-content:start!important;
+  width:100%!important;
+  margin-left:0!important;
+}
+.slip .info-left .detail-value,
+.slip .stat-left .stat-val {
+  grid-column:1!important;
+  width:19mm!important;
+  text-align:left!important;
+  padding-left:0!important;
+}
+.slip .info-left .detail-label,
+.slip .stat-left .stat-label {
+  grid-column:2!important;
+  width:auto!important;min-width:0!important;
+  justify-self:start!important;
+}
+@media print {
+  .slip .info-left .info-detail, .slip .stat-left .stat-row {grid-template-columns:19mm max-content!important;justify-content:start!important}
+}
+
+/* FIX 20261105: Nilai dan label kiri rapat, ulasan dipusatkan di bawah label. */
+.slip .info-left .info-detail,
+.slip .stat-left .stat-row {
+  display:grid!important;
+  grid-template-columns:max-content max-content!important;
+  column-gap:1.3mm!important;
+  justify-content:start!important;
+  align-items:baseline!important;
+  width:100%!important;
+}
+.slip .info-left .detail-value,
+.slip .stat-left .stat-val {
+  grid-column:1!important;
+  width:auto!important;
+  min-width:0!important;
+  text-align:left!important;
+}
+.slip .info-left .detail-label,
+.slip .stat-left .stat-label {
+  grid-column:2!important;
+  width:auto!important;
+  min-width:0!important;
+  justify-self:start!important;
+}
+.slip .excel-comment {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1.3mm!important;
+  width:100%!important;
+  text-align:center!important;
+}
+.slip .excel-comment .comment-label {
+  display:inline-flex!important;
+  align-items:baseline!important;
+  justify-content:center!important;
+  white-space:nowrap!important;
+  padding:0!important;
+  margin:0!important;
+}
+.slip .excel-comment .comment-text {
+  border:0!important;
+  padding:0!important;
+  width:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  text-align:center!important;
+  line-height:1.5!important;
+  white-space:normal!important;
+}
+
+/* FIX: Simbol & pada nama mata pelajaran tidak bold (paparan dan cetakan). */
+.slip .excel-table td.subject .amp-normal,
+.slip .excel-table td.subject .amp-normal * {
+  font-family: Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  font-synthesis: none !important;
+}
+@media print {
+  .slip .excel-table td.subject .amp-normal {font-weight:400!important;font-synthesis:none!important;}
+}
+
+/* FIX: Tajuk empat lajur pemarkahan Jawi menggunakan bold. */
+.slip .excel-table thead th {
+  font-weight: 700 !important;
+  font-family: 'Traditional Arabic', 'Noto Naskh Arabic', serif;
+  font-synthesis: weight;
+}
+@media print {
+  .slip .excel-table thead th { font-weight: 700 !important; }
+}
+
+/* FIX: Nilai markah dan gred (bukan hanya tajuk) dicetak tebal. */
+.slip .excel-table tbody td:nth-child(3),
+.slip .excel-table tbody td:nth-child(4) {
+  font-weight: 700 !important;
+}
+@media print {
+  .slip .excel-table tbody td:nth-child(3),
+  .slip .excel-table tbody td:nth-child(4) {
+    font-weight: 700 !important;
+  }
+}
+
+/* Pilihan ulasan guru daripada Excel */
+.comment-editor{margin:18px 0 12px;padding:15px;border:1px solid #dbe5f0;border-radius:8px;background:#f8fbff}.comment-editor label{margin-bottom:6px}.comment-editor select{max-width:100%;width:100%;font-weight:400}.comment-help{margin:8px 0 0;color:#667085;font-size:13px}
+
+.sessionbar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:15px}.sessionbar button{width:auto}#authPanel{max-width:470px;margin:30px auto}#authPanel label{display:block;margin:14px 0}#authPanel input{width:100%}#loginStatus{color:#9b2c2c}#appArea.hidden{display:none!important}

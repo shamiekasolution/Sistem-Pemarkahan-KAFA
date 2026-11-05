@@ -330,3 +330,13 @@
 .comment-editor{margin:18px 0 12px;padding:15px;border:1px solid #dbe5f0;border-radius:8px;background:#f8fbff}.comment-editor label{margin-bottom:6px}.comment-editor select{max-width:100%;width:100%;font-weight:400}.comment-help{margin:8px 0 0;color:#667085;font-size:13px}
 
 .sessionbar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:15px}.sessionbar button{width:auto}#authPanel{max-width:470px;margin:30px auto}#authPanel label{display:block;margin:14px 0}#authPanel input{width:100%}#loginStatus{color:#9b2c2c}#appArea.hidden{display:none!important}
+/* Popup tambah murid - tidak menjejaskan susun atur slip */
+.kafa-modal{position:fixed;inset:0;z-index:9999;background:rgba(10,25,45,.62);display:flex;align-items:center;justify-content:center;padding:18px}
+.kafa-modal.hidden{display:none!important}
+.kafa-modal-box{width:100%;max-width:440px;background:white;border-radius:14px;padding:26px;box-shadow:0 18px 55px #0004}
+.kafa-modal-box h2{font-size:21px;margin:0 0 10px;color:#102a48}
+.kafa-modal-box label{margin-top:18px}
+.kafa-modal-box input{max-width:none}
+.kafa-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.kafa-modal-actions .secondary{background:#e2e8f0;color:#17324e}
+@media print{.kafa-modal{display:none!important}}

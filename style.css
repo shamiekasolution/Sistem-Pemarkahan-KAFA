@@ -358,3 +358,42 @@ body:has(#authPanel:not(.hidden)) main{max-width:1100px}
 body:has(#appArea:not(.hidden)) .corporate-header{padding-top:20px;padding-bottom:20px}#appArea .sessionbar{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:18px;box-shadow:0 5px 18px #173c5d0c}#accountInfo{font-weight:700;color:#173e67}#appArea nav{background:#fff;padding:10px;border-radius:14px;border:1px solid var(--line);gap:9px;margin-bottom:20px}#appArea nav button{padding:13px 20px;font-weight:700;border-radius:9px}#appArea nav button.active{background:linear-gradient(120deg,#0b4a86,#1268aa);box-shadow:0 4px 12px #155a9529}#appArea .panel{border-radius:17px;border:1px solid var(--line);padding:27px;box-shadow:0 12px 35px #1b41630e}#appArea .toolbar{align-items:flex-end;gap:12px;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:22px}#appArea .toolbar label{margin:0;flex:1;max-width:430px}#appArea input,#appArea select{border-radius:9px;min-height:44px;background:#fbfdff}#appArea .toolbar button{min-height:44px;font-weight:700}#appArea #add{background:#eaf3fd;color:#0a4c8b;border:1px solid #c6dbee}#appArea #save,#appArea #saveMeta{background:linear-gradient(120deg,#0a4c87,#1267a9)}#appArea .markrow{padding:13px 12px;border-radius:8px;gap:20px}#appArea .markrow:nth-child(even){background:#f5f9fe}#appArea .markrow label{font-weight:700}#appArea .markrow output{color:#0b4e8c}#appArea .comment-editor{background:#f5f9fe;border-radius:12px;padding:20px}#appArea .summary{border:1px solid #cfe2f5;border-radius:12px}
 @media(max-width:650px){.corporate-header{padding:20px 18px;gap:12px}.brand-mark{width:48px;font-size:33px}.brand-copy h1{font-size:19px}.brand-copy p{font-size:12px}main{margin:18px auto;padding:0 12px}#authPanel.corporate-login{margin:18px auto;padding:22px 18px}.teacher-symbol{width:52px;height:52px;font-size:26px}.corporate-intro{gap:12px}.corporate-intro h2{font-size:21px}.corporate-intro p{font-size:12px}.login-features>div{padding:8px}.login-features strong{font-size:11px}#appArea .panel{padding:15px}#appArea .toolbar{align-items:stretch}#appArea .toolbar label,#appArea .toolbar button{width:100%;max-width:none}#appArea nav button{flex:1;padding:11px 8px;font-size:12px}.markrow{flex-wrap:wrap}}
 @media print{.corporate-header,.login-features,#authPanel,#appArea .sessionbar,#appArea nav{display:none!important}body{background:#fff!important}}
+
+
+/* KAFA Corporate Markah Dashboard — reference mockup styling */
+body:has(#appArea:not(.hidden)){background:radial-gradient(ellipse at 10% 25%,#edf7ff 0%,#d4e8ff 46%,#c4ddfa 100%);color:#082d5b}
+body:has(#appArea:not(.hidden)) .corporate-header{min-height:126px;background:linear-gradient(110deg,#002f60,#064e98 65%,#00336a);border-bottom:5px solid #ffc52e;box-shadow:0 7px 18px #2e5e8c24;position:relative;overflow:hidden}
+body:has(#appArea:not(.hidden)) .corporate-header:after{content:'✧  ✧  ✧  ✧  ✧  ✧  ✧';position:absolute;right:3%;top:8px;color:#f7c44d66;font-size:32px;letter-spacing:10px;pointer-events:none}
+body:has(#appArea:not(.hidden)) .brand-copy h1{font-size:clamp(23px,3vw,42px);font-weight:800;letter-spacing:.3px}
+body:has(#appArea:not(.hidden)) .brand-copy h1 em{color:#ffc52e;font-style:normal}
+body:has(#appArea:not(.hidden)) main{max-width:1440px;margin:10px auto;padding:0 28px}
+#appArea .sessionbar{display:flex;align-items:center;justify-content:flex-start;gap:22px;background:#f9fcffdd;border-radius:16px;padding:10px 22px;box-shadow:0 7px 18px #2b568523;margin:0 0 18px;min-height:58px;font-weight:800;color:#073f7c}
+#appArea .sessionbar #logoutBtn{margin-left:auto;background:linear-gradient(#166bb2,#003b7d);font-weight:800;box-shadow:0 4px 8px #154e8e2b}
+#appArea .year-badge{background:#d1e8ff;border-radius:10px;padding:8px 14px;border-left:1px solid #8cb7e4}
+#appArea nav{display:flex;gap:10px;margin:0 0 14px}
+#appArea nav button{min-width:225px;background:linear-gradient(#f7fbff,#dbeafc);color:#073a75;border:1px solid #f5faff;border-bottom:4px solid #bfd4ed;box-shadow:0 5px 12px #2b598c2a;border-radius:12px;font-size:17px;font-weight:800;padding:15px 22px}
+#appArea nav button.active{color:white;background:linear-gradient(#176fb7,#00407e);border-bottom-color:#ffca2f}
+#appArea #marks{background:linear-gradient(#ffffffee,#f9fcffeb);border-radius:19px;padding:24px;box-shadow:0 12px 25px #2b61952b}
+#appArea .section-title{margin:0 0 16px;font-size:25px;color:#003d7d;font-weight:800;border-left:6px solid #ffc329;padding:6px 18px}
+#appArea #marks .toolbar{background:linear-gradient(95deg,#eef6ff,#dbeaff);padding:14px 20px;border:0;border-radius:14px;display:flex;align-items:end;gap:16px;margin-bottom:12px}
+#appArea #marks .toolbar label{max-width:550px;flex:1;font-weight:800;color:#092e5e}
+#appArea #marks .toolbar select{background:white;min-height:43px;font-weight:800;color:#111}
+#appArea #marks .toolbar button{padding:12px 25px;min-height:52px;font-size:16px;border-radius:10px;color:white}
+#appArea #add{background:linear-gradient(#1973bb,#004786)!important;border:0!important;color:white!important}
+#appArea #save{background:linear-gradient(#12b2a7,#007b86)!important}
+#appArea #marks>label{display:block;margin:6px 0 16px 35px;max-width:810px;font-weight:800;color:#0c2e5a}
+#appArea #marks>label input{display:block;margin-top:5px;width:100%;font-weight:800;color:#111;background:white}
+#appArea .marks-table{border-radius:13px;overflow:hidden;box-shadow:0 5px 13px #2361a01b;margin-top:8px}
+#appArea .marks-table-head,#appArea .markrow{display:grid;grid-template-columns:90px minmax(210px,1fr) minmax(190px,290px) 125px;align-items:center;gap:10px}
+#appArea .marks-table-head{background:linear-gradient(#1670b8,#00417e);color:white;font-weight:800;padding:10px 20px;text-align:center;font-size:16px}
+#appArea .marks-table-head span:nth-child(2){text-align:left}
+#appArea .markrow{padding:5px 20px;border-radius:0;min-height:45px;background:#f6faff}
+#appArea .markrow:nth-child(odd){background:#dcecff}
+#appArea .mark-number{background:#e2eefb;border-radius:9px;max-width:50px;padding:5px 12px;text-align:center;font-weight:800;color:#101b2c}
+#appArea .subject-name{font-size:18px;font-weight:800;color:#091d38}
+#appArea .markrow input.mark{width:165px;min-height:34px;height:35px;padding:5px 12px;font-size:17px;font-weight:800;color:#111;background:white;border:1px solid #92b3dc;border-radius:8px;justify-self:center}
+#appArea .grade-pill{justify-self:center;min-width:85px;background:#ffe8a2;color:#151515;border-radius:9px;padding:6px 15px;text-align:center;font-weight:900;font-size:17px}
+#appArea #summary .summary{display:flex;align-items:center;justify-content:space-evenly;gap:12px;background:linear-gradient(100deg,#c7e0fc,#e7f2ff,#b6d7f8);border:0;border-radius:13px;margin-top:16px;padding:17px;font-size:19px;font-weight:800;color:#092b56}
+#appArea #summary .summary span+span{border-left:1px solid #4474a4;padding-left:25px}
+@media(max-width:850px){body:has(#appArea:not(.hidden)) main{padding:0 10px}#appArea nav button{min-width:0;flex:1;font-size:13px;padding:12px 5px}#appArea .marks-table-head,#appArea .markrow{grid-template-columns:42px minmax(90px,1fr) 110px 55px;gap:5px;padding-left:6px;padding-right:6px}#appArea .marks-table-head{font-size:11px}#appArea .subject-name{font-size:14px}#appArea .markrow input.mark{width:100%;font-size:14px}#appArea .grade-pill{min-width:48px;font-size:13px;padding:6px 3px}#appArea .mark-number{padding:5px 3px}#appArea #summary .summary{font-size:13px;flex-wrap:wrap}#appArea #summary .summary span+span{padding-left:8px}#appArea #marks .toolbar button{font-size:13px;padding:10px}#appArea .section-title{font-size:20px}}
+@media print{#appArea .marks-table-head,#appArea .markrow,#appArea .summary{print-color-adjust:exact;-webkit-print-color-adjust:exact}}

@@ -2,7 +2,7 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
 const subjects=['جاوي & خط','ادب & اخلاق اسلاميه','تلاوة القرءان','عقيدة','عبادة','اللغة العربية','سيره'];
 // Slip order from original Excel: D,F,H,J,L,N,P are displayed in reverse subject order.
 const map=[5,6,0,1,2,3,4];
-const initial=window.INITIAL_DATA;let db={meta:{...initial.meta},students:[]};let client=null;let user=null;let currentSchool=null;let profile=null;
+const initial=window.INITIAL_DATA;let db={meta:{...initial.meta},students:[]};let client=null;let user=null;let currentSchool=null;let profile=null;let currentClass=null;let classRows=[];
 const $=s=>document.querySelector(s);const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function grade(v){if(v===''||v===null||String(v).toUpperCase()==='TH')return 'TH';let n=Number(v);return n>=80?'A':n>=60?'B':n>=40?'C':n>=20?'D':'E'}
 function total(st){return st.marks.reduce((sum,v)=>sum+(typeof v==='number'?v:0),0)}
@@ -55,12 +55,84 @@ function bukaPopupTambahMurid(){
   });
 }
 
-$('#student').onchange=loadStudent;$('#slipStudent').onchange=()=>preview(false);$('#save').onclick=saveStudent;$('#add').onclick=async()=>{let name=await bukaPopupTambahMurid();if(!name?.trim())return;try{let st=await addStudentRemote(name.trim());db.students.push(st);refresh();$('#student').value=String(db.students.length-1);loadStudent()}catch(err){alert('Gagal tambah murid: '+err.message)}};$('#saveMeta').onclick=async()=>{const updated={...db.meta};document.querySelectorAll('[data-meta]').forEach(e=>updated[e.dataset.meta]=e.value);try{await saveMetaRemote(updated);db.meta=updated;preview(false);alert('Maklumat disimpan dalam Supabase.')}catch(err){alert('Gagal simpan: '+err.message)}};$('#printOne').onclick=()=>{preview(false);window.print()};$('#printAll').onclick=()=>{preview(true);window.print()};
+$('#student').onchange=loadStudent;$('#slipStudent').onchange=()=>preview(false);$('#save').onclick=saveStudent;$('#add').onclick=async()=>{let name=await bukaPopupTambahMurid();if(!name?.trim())return;try{let st=await addStudentRemote(name.trim());db.students.push(st);refresh();$('#student').value=String(db.students.length-1);loadStudent()}catch(err){alert('Gagal tambah murid: '+err.message)}};$('#saveMeta').onclick=async()=>{const updated={...db.meta};document.querySelectorAll('[data-meta]').forEach(e=>updated[e.dataset.meta]=e.value);try{if(currentClass){const className=classRows.find(c=>c.id===currentClass)?.name;if(className)updated.class=className;}await saveMetaRemote(updated);db.meta=updated;preview(false);alert('Maklumat disimpan dalam Supabase.')}catch(err){alert('Gagal simpan: '+err.message)}};$('#printOne').onclick=()=>{preview(false);window.print()};$('#printAll').onclick=()=>{preview(true);window.print()};
 
-async function saveStudentRemote(st){const {error}=await client.from('kafa_students').update({name:st.name,marks:st.marks,comment:st.comment}).eq('id',st.id).eq('school_id',currentSchool);if(error)throw error}
-async function addStudentRemote(name){const {data,error}=await client.from('kafa_students').insert({school_id:currentSchool,name,marks:Array(7).fill('TH'),comment:''}).select('id,name,marks,comment').single();if(error)throw error;return data}
-async function saveMetaRemote(meta){if(!profile||!currentSchool)throw new Error('Profil sekolah tidak tersedia');const {data,error}=await client.from('kafa_schools').update({meta}).eq('id',currentSchool).select('id,meta').single();if(error)throw new Error(error.message+' — Semak polisi UPDATE Supabase bagi guru sekolah ini.');if(!data)throw new Error('Tiada rekod dikemas kini. Semak polisi RLS Supabase.')}
-async function loadRemote(){const {data:prof,error:pe}=await client.from('kafa_profiles').select('school_id,role').eq('user_id',user.id).single();if(pe)throw new Error('Akaun belum didaftarkan oleh pentadbir: '+pe.message);profile=prof;currentSchool=prof.school_id;const [{data:school,error:se},{data:students,error:te}]=await Promise.all([client.from('kafa_schools').select('meta').eq('id',currentSchool).single(),client.from('kafa_students').select('id,name,marks,comment').eq('school_id',currentSchool).order('name')]);if(se||te)throw se||te;db={meta:{...initial.meta,...school.meta},students:students||[]};initMeta();document.querySelectorAll('[data-meta]').forEach(e=>{e.disabled=false;e.readOnly=false});$('#saveMeta').disabled=false;refresh()}
+async function saveStudentRemote(st){const {error}=await client.from('kafa_students').update({name:st.name,marks:st.marks,comment:st.comment}).eq('id',st.id).eq('school_id',currentSchool).eq('class_id',currentClass);if(error)throw error}
+async function addStudentRemote(name){const {data,error}=await client.from('kafa_students').insert({school_id:currentSchool,class_id:currentClass,name,marks:Array(7).fill('TH'),comment:''}).select('id,name,marks,comment').single();if(error)throw error;return data}
+async function saveMetaRemote(meta){if(!profile||!currentSchool)throw new Error('Profil sekolah tidak tersedia');const {data:original,error:readError}=await client.from('kafa_schools').select('meta').eq('id',currentSchool).single();if(readError)throw readError;const {data,error}=await client.from('kafa_schools').update({meta:{...meta,class:original.meta?.class}}).eq('id',currentSchool).select('id,meta').single();if(error)throw new Error(error.message+' — Semak polisi UPDATE Supabase bagi guru sekolah ini.');if(!data)throw new Error('Tiada rekod dikemas kini. Semak polisi RLS Supabase.')}
+async function loadRemote(){
+ const {data:prof,error:pe}=await client.from('kafa_profiles').select('school_id,role,class_id').eq('user_id',user.id).single();
+ if(pe)throw new Error('Akaun belum didaftarkan oleh pentadbir: '+pe.message);
+ profile=prof;currentSchool=prof.school_id;
+ const admin=String(profile.role||'').toLowerCase()==='admin';
+ const [{data:school,error:se},{data:classes,error:ce}]=await Promise.all([
+  client.from('kafa_schools').select('meta').eq('id',currentSchool).single(),
+  client.from('kafa_classes').select('id,name').eq('school_id',currentSchool).order('name')
+ ]);
+ if(se||ce)throw se||ce;
+ classRows=classes||[];
+ currentClass=admin?(currentClass&&classRows.some(c=>c.id===currentClass)?currentClass:(classRows[0]?.id||null)):profile.class_id;
+ if(!admin&&!currentClass)throw new Error('Pentadbir belum menetapkan kelas untuk akaun guru ini.');
+ await loadClassStudents(school.meta);
+ const adminNav=$('#adminNav');if(adminNav)adminNav.classList.toggle('hidden',!admin);
+ const adminPanel=$('#admin');if(adminPanel)adminPanel.classList.toggle('hidden',true);
+ if(admin)await loadAdmin();
+}
+async function loadClassStudents(schoolMeta){
+ let query=client.from('kafa_students').select('id,name,marks,comment').eq('school_id',currentSchool).order('name');
+ if(currentClass)query=query.eq('class_id',currentClass);else query=query.is('class_id',null).eq('id','00000000-0000-0000-0000-000000000000');
+ const {data:students,error:te}=await query;if(te)throw te;
+ const chosen=classRows.find(c=>c.id===currentClass);
+ db={meta:{...initial.meta,...schoolMeta,...(chosen?{class:chosen.name}:{})},students:students||[]};
+ initMeta();const classInput=document.querySelector('[data-meta="class"]');if(classInput){classInput.readOnly=true;classInput.title='Kelas ditetapkan oleh pentadbir';}
+ document.querySelectorAll('[data-meta]').forEach(e=>{if(e!==classInput){e.disabled=false;e.readOnly=false}});
+ $('#saveMeta').disabled=false;
+ $('#add').disabled=!currentClass;$('#save').disabled=!currentClass;
+ refresh();
+}
+async function loadAdmin(){
+ if(String(profile?.role||'').toLowerCase()!=='admin')return;
+ const [{data:teachers,error:pe},{data:unassigned,error:ue}]=await Promise.all([
+  client.rpc('kafa_admin_list_teachers'),
+  client.from('kafa_students').select('id,name').eq('school_id',currentSchool).is('class_id',null).order('name')
+ ]);
+ if(pe||ue)throw pe||ue;
+ const teacherRows=teachers||[];
+ $('#adminClassSelect').innerHTML=classRows.map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
+ $('#adminTeacher').innerHTML=teacherRows.map(t=>`<option value="${escapeHTML(t.user_id)}">${escapeHTML(t.email||t.user_id)} (${escapeHTML(t.role)})</option>`).join('');
+ $('#adminTeacherClass').innerHTML='<option value="">— Tiada kelas —</option>'+classRows.map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
+ $('#adminCurrentClass').innerHTML=classRows.map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
+ if(currentClass)$('#adminCurrentClass').value=currentClass;
+ $('#adminUnassigned').innerHTML=unassigned.length?unassigned.map(s=>`<label style="display:block"><input type="checkbox" value="${escapeHTML(s.id)}" class="unassigned-student"> ${escapeHTML(s.name)}</label>`).join(''):'Tiada murid yang belum mempunyai kelas.';
+ $('#adminTeacherList').innerHTML=teacherRows.map(t=>`<div>${escapeHTML(t.email||t.user_id)} — ${escapeHTML(classRows.find(c=>c.id===t.class_id)?.name||'Belum ditetapkan')}</div>`).join('');
+}
+async function adminAction(fn){try{await fn();await loadAdmin();alert('Berjaya disimpan.')}catch(err){alert('Gagal: '+err.message)}}
+$('#adminCreateClass').onclick=()=>adminAction(async()=>{
+ const name=$('#adminNewClass').value.trim();if(!name)throw Error('Masukkan nama kelas.');
+ const {error}=await client.rpc('kafa_admin_create_class',{p_name:name});if(error)throw error;
+ $('#adminNewClass').value='';const {data,error:e}=await client.from('kafa_classes').select('id,name').eq('school_id',currentSchool).order('name');if(e)throw e;classRows=data||[];
+});
+$('#adminRegisterTeacher').onclick=()=>adminAction(async()=>{
+ const email=$('#adminTeacherEmail').value.trim();if(!email)throw Error('Masukkan e-mel guru.');
+ const {error}=await client.rpc('kafa_admin_register_teacher',{p_email:email});if(error)throw error;
+ $('#adminTeacherEmail').value='';
+});
+$('#adminAssignTeacher').onclick=()=>adminAction(async()=>{
+ const uid=$('#adminTeacher').value;const cid=$('#adminTeacherClass').value||null;
+ if(!uid)throw Error('Tiada akaun guru dipilih.');
+ const {error}=await client.rpc('kafa_admin_assign_teacher',{p_user_id:uid,p_class_id:cid});if(error)throw error;
+});
+$('#adminAssignStudents').onclick=()=>adminAction(async()=>{
+ const cid=$('#adminClassSelect').value;
+ const ids=[...document.querySelectorAll('.unassigned-student:checked')].map(x=>x.value);
+ if(!cid||!ids.length)throw Error('Pilih kelas dan sekurang-kurangnya seorang murid.');
+ const {error}=await client.rpc('kafa_admin_assign_students',{p_student_ids:ids,p_class_id:cid});if(error)throw error;
+});
+$('#adminOpenClass').onclick=async()=>{
+ const cid=$('#adminCurrentClass').value;if(!cid)return;
+ currentClass=cid;const {data,error}=await client.from('kafa_schools').select('meta').eq('id',currentSchool).single();if(error)return alert(error.message);
+ await loadClassStudents(data.meta);alert('Paparan kelas ditukar.');
+};
 async function setSession(session){user=session?.user||null;$('#authPanel').classList.toggle('hidden',!!user);$('#appArea').classList.toggle('hidden',!user);if(user){$('#accountInfo').textContent=user.email;try{await loadRemote();$('#loginStatus').textContent=''}catch(err){$('#loginStatus').textContent=err.message;$('#appArea').classList.add('hidden');$('#authPanel').classList.remove('hidden')}}}
 const config=window.KAFA_SUPABASE||{};
 if(!config.url||!config.anonKey||config.url.includes('YOUR_')){$('#loginStatus').textContent='Sila isi config.js dengan URL projek dan publishable/anon key Supabase.';$('#loginBtn').disabled=true}

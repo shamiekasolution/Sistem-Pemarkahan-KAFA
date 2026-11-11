@@ -20,7 +20,7 @@ function ensureAttendanceInput(){
   const field=document.createElement('label');
   field.id='attendanceField';
   field.style.cssText='display:block;margin-top:14px;max-width:650px;font-weight:600';
-  field.innerHTML='<span>Kedatangan Murid (كداتاغن)</span><input id="attendanceInput" type="text" maxlength="40" placeholder="Contoh: 180/200" autocomplete="off" style="display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:12px;border:1px solid #b9cde5;border-radius:8px;font:inherit;font-weight:400">';
+  field.innerHTML='<span>Kedatangan Murid</span><input id="attendanceInput" type="text" maxlength="40" placeholder="Contoh: 180/200" autocomplete="off" style="display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:12px;border:1px solid #b9cde5;border-radius:8px;font:inherit;font-weight:400">';
   const parent=comment.closest('label');
   (parent && parent.contains(comment) ? parent : comment).insertAdjacentElement('afterend',field);
   return field.querySelector('input');

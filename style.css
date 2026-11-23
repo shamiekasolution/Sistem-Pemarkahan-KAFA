@@ -406,3 +406,7 @@ body:has(#appArea:not(.hidden)) main{max-width:1440px;margin:10px auto;padding:0
 @media print{
   .slip .excel-signatures .sig-image{display:block!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+
+/* Tarikh cetakan automatik pada ketiga-tiga ruangan tandatangan. */
+.slip .excel-signatures .sig-date{white-space:nowrap;align-items:baseline!important}
+.slip .excel-signatures .sig-date-value{display:inline!important;margin:0 0 0 4px!important;font-family:Arial,sans-serif;font-size:9px;direction:ltr;unicode-bidi:isolate}

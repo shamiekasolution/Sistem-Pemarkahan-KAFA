@@ -397,3 +397,12 @@ body:has(#appArea:not(.hidden)) main{max-width:1440px;margin:10px auto;padding:0
 #appArea #summary .summary span+span{border-left:1px solid #4474a4;padding-left:25px}
 @media(max-width:850px){body:has(#appArea:not(.hidden)) main{padding:0 10px}#appArea nav button{min-width:0;flex:1;font-size:13px;padding:12px 5px}#appArea .marks-table-head,#appArea .markrow{grid-template-columns:42px minmax(90px,1fr) 110px 55px;gap:5px;padding-left:6px;padding-right:6px}#appArea .marks-table-head{font-size:11px}#appArea .subject-name{font-size:14px}#appArea .markrow input.mark{width:100%;font-size:14px}#appArea .grade-pill{min-width:48px;font-size:13px;padding:6px 3px}#appArea .mark-number{padding:5px 3px}#appArea #summary .summary{font-size:13px;flex-wrap:wrap}#appArea #summary .summary span+span{padding-left:8px}#appArea #marks .toolbar button{font-size:13px;padding:10px}#appArea .section-title{font-size:20px}}
 @media print{#appArea .marks-table-head,#appArea .markrow,#appArea .summary{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+/* Tandatangan rasmi: dipaparkan pada pratonton dan cetakan A4. */
+.slip .excel-signatures .sig-image{
+  position:absolute;top:4mm;left:50%;transform:translateX(-50%);
+  display:block;width:36mm;height:13mm;object-fit:contain;
+  margin:0;max-width:none;pointer-events:none;
+}
+@media print{
+  .slip .excel-signatures .sig-image{display:block!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
